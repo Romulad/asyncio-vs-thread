@@ -1,0 +1,63 @@
+{
+    "cpu": {
+        "sys_max_usage": 28.7,
+        "sys_min_usage": 7.1,
+        "sys_average_usage": 24.72,
+        "proc_max_usage": 103.3,
+        "proc_min_usage": 25.2,
+        "proc_average_usage": 96.315,
+        "recording_interval": 0.5,
+        "sys_usage": [
+            25.1,
+            28.7,
+            25.7,
+            25.7,
+            25.3,
+            25.1,
+            25.1,
+            25.4,
+            25.5,
+            25.6,
+            24.8,
+            25.2,
+            25.2,
+            25.7,
+            25.0,
+            27.4,
+            25.0,
+            25.6,
+            26.2,
+            7.1
+        ],
+        "proc_usage": [
+            98.7,
+            100.6,
+            100.6,
+            100.6,
+            101.5,
+            100.5,
+            98.7,
+            100.6,
+            101.5,
+            97.8,
+            103.3,
+            98.7,
+            97.8,
+            98.8,
+            100.7,
+            102.5,
+            99.7,
+            98.7,
+            99.8,
+            25.2
+        ],
+        "core_count": 4,
+        "meaning": {
+            "proc": "Stands for process, the process in which the program is running ",
+            "sys": "Stands for system, the whole system",
+            "recording_interval": "Time in second between CPU usage record"
+        }
+    },
+    "elapsed_seconds": 10.360524340998381,
+    "description": "Cpu bound execution with asyncio"
+}
