@@ -1,0 +1,43 @@
+{
+    "cpu": {
+        "sys_max_usage": 51.3,
+        "sys_min_usage": 3.8,
+        "sys_average_usage": 29.43,
+        "proc_max_usage": 125.5,
+        "proc_min_usage": 11.6,
+        "proc_average_usage": 93.03999999999999,
+        "recording_interval": 0.5,
+        "sys_usage": [
+            51.1,
+            51.3,
+            34.9,
+            25.6,
+            25.6,
+            25.6,
+            25.8,
+            25.6,
+            25.0,
+            3.8
+        ],
+        "proc_usage": [
+            102.2,
+            125.5,
+            78.8,
+            101.3,
+            101.8,
+            101.5,
+            103.8,
+            101.4,
+            102.5,
+            11.6
+        ],
+        "core_count": 4,
+        "meaning": {
+            "proc": "Stands for process, the process in which the program is running ",
+            "sys": "Stands for system, the whole system",
+            "recording_interval": "Time in second between CPU usage record"
+        }
+    },
+    "elapsed_seconds": 12.231305753000925,
+    "description": "Cpu bound execution with 2 Threads"
+}

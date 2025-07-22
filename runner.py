@@ -1,5 +1,6 @@
 import time
 import json
+import os
 from dataclasses import dataclass, asdict, field
 
 from cpu import CpuSupervisor, CpuUsage
@@ -30,7 +31,8 @@ def program_runner(fn, name, dir_name, *, descr="",  **kwargs):
     )
     data = asdict(data)
     
-    with open(f"{dir_name}/{name}.json", "w") as f:
+    os.makedirs(f"{dir_name}/json", exist_ok=True)
+    with open(f"{dir_name}/json/{name}.json", "w") as f:
         json.dump(data, f, indent=4)
 
     return data, result

@@ -1,0 +1,41 @@
+{
+    "cpu": {
+        "sys_max_usage": 26.4,
+        "sys_min_usage": 22.6,
+        "sys_average_usage": 25.72222222222222,
+        "proc_max_usage": 120.5,
+        "proc_min_usage": 91.0,
+        "proc_average_usage": 102.97777777777777,
+        "recording_interval": 0.5,
+        "sys_usage": [
+            26.1,
+            26.3,
+            26.1,
+            26.4,
+            26.4,
+            25.9,
+            26.1,
+            25.6,
+            22.6
+        ],
+        "proc_usage": [
+            104.5,
+            103.3,
+            103.0,
+            120.5,
+            96.3,
+            102.8,
+            104.4,
+            101.0,
+            91.0
+        ],
+        "core_count": 4,
+        "meaning": {
+            "proc": "Stands for process, the process in which the program is running ",
+            "sys": "Stands for system, the whole system",
+            "recording_interval": "Time in second between CPU usage record"
+        }
+    },
+    "elapsed_seconds": 11.989536622000742,
+    "description": "Cpu bound execution with 4 Threads"
+}
