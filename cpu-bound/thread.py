@@ -42,7 +42,7 @@ if __name__ == "__main__":
             main,
             f"{i}_threads_data",
             get_dir_name(__file__),
-            descr=f"Cpu bound execution with {i} Threads",
+            descr=f"Cpu bound execution with {i} Threads. The experiment count bytes per characteres for 1_00_000 generated urls. The returned_value represents the total bytes of the operation.",
             thread_count=i
         )
         time.sleep(0.8)

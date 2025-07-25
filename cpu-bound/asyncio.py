@@ -26,5 +26,5 @@ if __name__ == "__main__":
         execute,
         "asyncio_data",
         get_dir_name(__file__),
-        descr="Cpu bound execution with asyncio"
+        descr="Cpu bound execution with asyncio. The experiment count bytes per characteres for 1_00_000 generated urls. The returned_value represents the total bytes of the operation."
     )
