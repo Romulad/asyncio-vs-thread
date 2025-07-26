@@ -14,7 +14,6 @@ class Metrics:
     elapsed_seconds: float
     download_speed_per_s: float|None = field(default=None) 
     upload_speed_per_s: float|None = field(default=None)
-    average_speed_per_s: float|None = field(default=None)
     description: str = field(default="")
 
 
@@ -42,7 +41,6 @@ def program_runner(fn, name, dir_name, *, descr="",  **kwargs):
             description=descr,
             download_speed_per_s=total_bytes_receive / elapsed,
             upload_speed_per_s=total_bytes_sent / elapsed,
-            average_speed_per_s=(total_bytes_receive + total_bytes_sent) / elapsed / 2
     )
     data = asdict(data)
     data["returned_value(s)"] = result
