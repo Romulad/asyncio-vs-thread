@@ -12,9 +12,10 @@ from cpu import CpuSupervisor, CpuUsage
 class Metrics:
     cpu: CpuUsage
     elapsed_seconds: float
-    download_speed_per_s: float|None = field(default=None) 
+    total_download: int|None = field(default=None)
+    download_speed_per_s: float|None = field(default=None)
+    total_upload: int|None = field(default=None)
     upload_speed_per_s: float|None = field(default=None)
-    average_speed_per_s: float|None = field(default=None)
     description: str = field(default="")
 
 
@@ -40,9 +41,10 @@ def program_runner(fn, name, dir_name, *, descr="",  **kwargs):
             cpu=supervisor.get_usage(),
             elapsed_seconds=elapsed,
             description=descr,
+            total_download=total_bytes_receive,
             download_speed_per_s=total_bytes_receive / elapsed,
+            total_upload=total_bytes_sent,
             upload_speed_per_s=total_bytes_sent / elapsed,
-            average_speed_per_s=(total_bytes_receive + total_bytes_sent) / elapsed / 2
     )
     data = asdict(data)
     data["returned_value(s)"] = result
