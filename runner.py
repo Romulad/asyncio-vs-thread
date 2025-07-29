@@ -1,6 +1,7 @@
 import time
 import json
 import os
+from functools import wraps
 from dataclasses import dataclass, asdict, field
 
 import psutil
@@ -19,33 +20,81 @@ class Metrics:
     description: str = field(default="")
 
 
-def program_runner(fn, name, dir_name, *, descr="",  **kwargs):
-    net_ts = psutil.net_io_counters()
+def network_usage_recorder(fn):
+    @wraps(fn)
+    def recorder(*arg, **kwargs):
+        net_ts = psutil.net_io_counters() 
 
-    supervisor = CpuSupervisor()
-    supervisor.start()
+        data, result = fn(*arg, **kwargs)
 
-    start = time.perf_counter()
+        net_te = psutil.net_io_counters()
+
+        total_bytes_sent = net_te.bytes_sent - net_ts.bytes_sent
+        total_bytes_receive = net_te.bytes_recv - net_ts.bytes_recv
+        
+        elapsed = data["elapsed_seconds"] # must exist
+
+        data = {
+            **data,
+            "total_download": total_bytes_receive,
+            "download_speed_per_s": total_bytes_receive / elapsed,
+            "total_upload": total_bytes_sent,
+            "upload_speed_per_s": total_bytes_sent / elapsed,
+        }
+        return data, result
+    return recorder
+
+
+def cpu_usage_recorder(fn):
+    @wraps(fn)
+    def recorder(*arg, **kwargs):
+        supervisor = CpuSupervisor()
+        supervisor.start()
+
+        data, result = fn(*arg, **kwargs)
+        
+        supervisor.stop_checking()
+        supervisor.join()
+
+        data = {
+            **data,
+            "cpu": supervisor.get_usage()
+        }
+        return data, result
+    return recorder
+
+
+def elapsed_time_recorder(fn):
+    @wraps(fn)
+    def recorder(*arg, **kwargs):
+        start = time.perf_counter()
+        data, result = fn(*arg, **kwargs)
+        elapsed = time.perf_counter() - start
+
+        data = {
+            **data,
+            "elapsed_seconds": elapsed
+        }
+        return data, result
+    return recorder
+
+
+@network_usage_recorder
+@cpu_usage_recorder
+@elapsed_time_recorder
+def execute(fn, **kwargs):
     result = fn(**kwargs)
-    elapsed = time.perf_counter() - start
-    
-    supervisor.stop_checking()
-    supervisor.join()
+    return {}, result
 
-    net_te = psutil.net_io_counters()
 
-    total_bytes_sent = net_te.bytes_sent - net_ts.bytes_sent
-    total_bytes_receive = net_te.bytes_recv - net_ts.bytes_recv
+def program_runner(fn, name, dir_name, *, descr="",  **kwargs):
+    metric_data, result =  execute(fn, **kwargs)
 
     data = Metrics(
-            cpu=supervisor.get_usage(),
-            elapsed_seconds=elapsed,
-            description=descr,
-            total_download=total_bytes_receive,
-            download_speed_per_s=total_bytes_receive / elapsed,
-            total_upload=total_bytes_sent,
-            upload_speed_per_s=total_bytes_sent / elapsed,
+        **metric_data,
+        description=descr,
     )
+
     data = asdict(data)
     data["returned_value(s)"] = result
     
