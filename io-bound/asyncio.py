@@ -23,9 +23,11 @@ async def get_and_write_data(
     try:
         async with client.get(url) as response:
             if not response.ok:
+                print(response.status)
                 return False
             await af.write(await response.read())
-    except Exception:
+    except Exception as e:
+        print(e)
         return False
     else:
         return True

@@ -28,11 +28,13 @@ async def target_task(
     try:
         async with client.get(url) as response:
             if not response.ok:
+                print(response.status)
                 return False
             async with vf_lock: 
                 vf.write(await response.read())
             return True
-    except Exception:
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -159,7 +161,7 @@ if __name__ == "__main__":
     raised = raise_fd_limit()
     max_ts = 1000 if raised else 900
     for count in [10, 100, max_ts]:
-        print("execution for", count, "threads...")
+        print("execution for", count, "threads...\n")
         program_runner(
             main,
             f"{count}_threads_plus_asyncio_with_100_000_urls",

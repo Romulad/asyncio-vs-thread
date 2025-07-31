@@ -16,11 +16,13 @@ def main(url_count=50):
             for url in generate_valid_urls(url_count):
                 try:
                     response = s.get(url=url)
-                except Exception:
+                except Exception as e:
+                    print(e)
                     failed_count += 1
                     continue
                 else:
                     if not response.ok:
+                        print(response.status_code)
                         failed_count += 1
                         continue
                     f.write(response.content)

@@ -28,10 +28,12 @@ def get_and_write_data(
             url = q.get(block=False)
             try:
                 response = client.get(url)
-            except Exception:
+            except Exception as e:
+                print(e)
                 failed_count.increment()
             else:
                 if not response.ok:
+                    print(response.status_code)
                     failed_count.increment()
                 else:
                     with f_lock:
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     raised = raise_fd_limit()
     max_ts = 1000 if raised else 900
     for count in [10, 100, max_ts]:
-        print("execution for", count, "threads...")
+        print("execution for", count, "threads...\n")
         program_runner(
             main,
             f"{count}_threads_data_with_100_000_urls",
