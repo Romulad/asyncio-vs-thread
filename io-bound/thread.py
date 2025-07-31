@@ -1,12 +1,18 @@
 import os
 import tempfile
 from threading import Thread, Lock
+import time
 from typing import BinaryIO
 from queue import Queue, Empty
 
 import requests
 
-from lib import generate_valid_urls, get_dir_name
+from lib import (
+    generate_valid_urls, 
+    get_dir_name, 
+    raise_fd_limit, 
+    get_openable_fd_for_req
+)
 from runner import program_runner
 
 
@@ -36,6 +42,12 @@ def get_and_write_data(
             break
 
 def main(thread_count=5):
+    if thread_count > get_openable_fd_for_req():
+        ValueError(
+            "Thread count should be less than process fd limit",
+            "soft_limit - 124"
+        )
+
     total_bytes = 0
     total_urls = 100_000
     threads:list[Thread] = []
@@ -83,12 +95,17 @@ def main(thread_count=5):
 
 
 if __name__ == "__main__":
-    program_runner(
-        main,
-        f"900_thread_data_with_100000_urls",
-        get_dir_name(__file__),
-        thread_count=900,
-        descr=f"""Io bound execution using 900 threads. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
-    )
+    raised = raise_fd_limit()
+    max_ts = 1000 if raised else 900
+    for count in [10, 100, max_ts]:
+        print("execution for", count, "threads...")
+        program_runner(
+            main,
+            f"{count}_threads_data_with_100_000_urls",
+            get_dir_name(__file__),
+            thread_count=count,
+            descr=f"""Io bound execution using {count} threads. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+        )
+        time.sleep(10)
 
 

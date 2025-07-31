@@ -34,10 +34,10 @@ def main(url_count=50):
 if __name__ == "__main__":
     program_runner(
         main,
-        f"sync_data_with_150_urls",
+        f"sync_data_with_100_urls",
         get_dir_name(__file__),
-        url_count=150,
-        descr=f"""Io bound execution using sync programming. The experiment fetches 150 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+        url_count=100,
+        descr=f"""Io bound execution using sync programming. The experiment fetches 100 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
     )
         
 

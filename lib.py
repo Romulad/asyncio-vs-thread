@@ -1,3 +1,4 @@
+import resource
 from pathlib import Path
 
 def generate_valid_urls(count=10000):
@@ -15,3 +16,16 @@ def generate_valid_urls(count=10000):
 
 def get_dir_name(path_str:str):
     return Path(path_str).parent.name
+
+
+def get_openable_fd_for_req():
+    openable, _ = resource.getrlimit(resource.RLIMIT_NOFILE)
+    return openable - 124
+
+
+def raise_fd_limit(count=2048):
+    _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    new_soft = min(count, hard)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
+    new_soft, _ = resource.getrlimit(resource.RLIMIT_NOFILE)
+    return count >= new_soft

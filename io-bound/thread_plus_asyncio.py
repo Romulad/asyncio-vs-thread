@@ -2,13 +2,20 @@ import asyncio
 import tempfile
 import os
 import io
+import time
 from threading import Thread, Lock
 from queue import Empty, Queue
 from typing import BinaryIO
 
-import aiohttp 
+import aiohttp
+from aiohttp.compression_utils import MAX_SYNC_CHUNK_SIZE 
 
-from lib import generate_valid_urls, get_dir_name
+from lib import (
+    generate_valid_urls, 
+    get_dir_name, 
+    get_openable_fd_for_req,
+    raise_fd_limit
+)
 from runner import program_runner
 
 
@@ -18,7 +25,6 @@ async def target_task(
     vf:io.BytesIO,
     vf_lock:asyncio.Lock,
 ):
-    # TODO: Need  way to avoid fd limit
     try:
         async with client.get(url) as response:
             if not response.ok:
@@ -31,12 +37,17 @@ async def target_task(
 
 
 async def async_main(
-    urls:list,
+        urls:list, 
+        concurrent_limit:int
 ):
     vf = io.BytesIO()
     vf_lock = asyncio.Lock()
     failed_count = 0
-    async with aiohttp.ClientSession() as client:
+    tcp_connector = aiohttp.TCPConnector(
+        limit=concurrent_limit,
+        ttl_dns_cache=60*60*10,
+    )
+    async with aiohttp.ClientSession(connector=tcp_connector) as client:
         results = await asyncio.gather(
             *[
                 target_task(
@@ -55,6 +66,7 @@ def get_and_write_data(
     q:Queue,
     f:BinaryIO,
     f_lock:Lock,
+    concurrent_limit:int,
     failed_counter,
 ):
     loop = asyncio.new_event_loop()
@@ -68,7 +80,7 @@ def get_and_write_data(
             else:
                 try:
                     data, failed_count = loop.run_until_complete(
-                        async_main(urls)
+                        async_main(urls, concurrent_limit)
                     )
                     failed_counter.increment(failed_count)
                     with f_lock:
@@ -80,6 +92,14 @@ def get_and_write_data(
 
 
 def main(thread_count=5):
+    # fd openable in the process
+    openable_by_t = get_openable_fd_for_req()
+    if thread_count >= openable_by_t:
+        raise ValueError(
+            "Thread count should be less than ", 
+            "process fd soft limit, that is soft_limit - 124"
+        )
+
     threads:list[Thread] = []
     q = Queue()
     url_count = 100_000
@@ -118,6 +138,8 @@ def main(thread_count=5):
                     q, 
                     f, 
                     f_lock,
+                    # less fd opened better than more, no exact number needed 
+                    openable_by_t // thread_count,
                     failed_counter,
                 )
             )
@@ -134,12 +156,17 @@ def main(thread_count=5):
 
 
 if __name__ == "__main__":
-    program_runner(
-        main,
-        "asyncio_plus_thread_with_100_000_urls",
-        get_dir_name(__file__),
-        thread_count=5,
-        descr=f"""Io bound execution using 5 threads plus asyncio loop in each. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
-    )
+    raised = raise_fd_limit()
+    max_ts = 1000 if raised else 900
+    for count in [10, 100, max_ts]:
+        print("execution for", count, "threads...")
+        program_runner(
+            main,
+            f"{count}_threads_plus_asyncio_with_100_000_urls",
+            get_dir_name(__file__),
+            thread_count=count,
+            descr=f"""Io bound execution using {count} threads plus asyncio loop in each. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+        )
+        time.sleep(10)
 
 

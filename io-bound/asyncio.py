@@ -6,7 +6,12 @@ from tempfile import gettempdir
 from aiofile import async_open, FileIOWrapperBase
 import aiohttp
 
-from lib import generate_valid_urls, get_dir_name
+from lib import (
+    generate_valid_urls, 
+    get_dir_name, 
+    get_openable_fd_for_req,
+    raise_fd_limit
+)
 from runner import program_runner
 
 
@@ -31,7 +36,7 @@ async def main(url_count=50):
     failed_count = 0
     total_bytes = 0
     tcp_connector = aiohttp.TCPConnector(
-        limit=900,
+        limit=get_openable_fd_for_req(),
         ttl_dns_cache=60*60*10
     )
 
@@ -55,6 +60,8 @@ async def main(url_count=50):
 
 
 if __name__ == "__main__":
+    raise_fd_limit()
+
     def execute(url_count=50):
         return asyncio.run(main(url_count))
     
