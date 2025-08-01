@@ -8,7 +8,6 @@ from queue import Empty, Queue
 from typing import BinaryIO
 
 import aiohttp
-from aiohttp.compression_utils import MAX_SYNC_CHUNK_SIZE 
 
 from lib import (
     generate_valid_urls, 
