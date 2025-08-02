@@ -28,4 +28,7 @@ def raise_fd_limit(count=2048):
     new_soft = min(count, hard)
     resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
     new_soft, _ = resource.getrlimit(resource.RLIMIT_NOFILE)
-    return count >= new_soft
+    return new_soft >= count
+
+
+
