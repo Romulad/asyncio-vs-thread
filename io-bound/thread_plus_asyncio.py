@@ -95,10 +95,9 @@ def get_and_write_data(
 def main(thread_count=5):
     # fd openable in the process
     openable_by_t = get_openable_fd_for_req()
-    if thread_count >= openable_by_t:
+    if thread_count > openable_by_t:
         raise ValueError(
-            "Thread count should be less than ", 
-            "process fd soft limit, that is soft_limit - 124"
+            "Thread count should be less than fd limit", 
         )
 
     threads:list[Thread] = []
@@ -158,8 +157,9 @@ def main(thread_count=5):
 
 if __name__ == "__main__":
     raised = raise_fd_limit()
-    max_ts = 1000 if raised else 900
-    for count in [10, 100, max_ts]:
+    print("Raised fd limit", raised)
+
+    for count in [10, 100, get_openable_fd_for_req()]:
         print("execution for", count, "threads...\n")
         program_runner(
             main,

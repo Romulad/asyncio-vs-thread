@@ -62,9 +62,10 @@ async def main(url_count=50):
 
 
 if __name__ == "__main__":
-    raise_fd_limit()
+    raised = raise_fd_limit()
+    print("Raised fd limit", raised)
 
-    def execute(url_count=50):
+    def execute(url_count=100_000):
         return asyncio.run(main(url_count))
     
     program_runner(

@@ -47,7 +47,6 @@ def main(thread_count=5):
     if thread_count > get_openable_fd_for_req():
         ValueError(
             "Thread count should be less than process fd limit",
-            "soft_limit - 124"
         )
 
     total_bytes = 0
@@ -98,8 +97,9 @@ def main(thread_count=5):
 
 if __name__ == "__main__":
     raised = raise_fd_limit()
-    max_ts = 1000 if raised else 900
-    for count in [10, 100, max_ts]:
+    print("Raised fd limit", raised)
+    
+    for count in [10, 100, get_openable_fd_for_req()]:
         print("execution for", count, "threads...\n")
         program_runner(
             main,

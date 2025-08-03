@@ -1,6 +1,7 @@
 import os
 import requests
 import tempfile
+import time
 
 from lib import generate_valid_urls, get_dir_name
 from runner import program_runner
@@ -34,12 +35,15 @@ def main(url_count=50):
 
 
 if __name__ == "__main__":
-    program_runner(
-        main,
-        f"sync_data_with_100_urls",
-        get_dir_name(__file__),
-        url_count=100,
-        descr=f"""Io bound execution using sync programming. The experiment fetches 100 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
-    )
+    for count in [100, 1000]:
+        print("Execution for", count,"urls...")
+        program_runner(
+            main,
+            f"sync_data_with_{count}_urls",
+            get_dir_name(__file__),
+            url_count=count,
+            descr=f"""Io bound execution using sync programming. The experiment fetches {count} urls and stores the response data into a file. The returned values represent the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+        )
+        time.sleep(5)
         
 
