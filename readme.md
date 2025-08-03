@@ -1,48 +1,42 @@
-# 🧠 Python Concurrency Benchmark — Personal Roadmap
+# 🧠 Python Concurrency Model Benchmark
 
-## 📌 WHY am I doing this?
+<!--- Add a short description about it ---->
 
-I want to **understand the real, practical difference** between:
-- Synchronous I/O
-- Thread-based concurrency
-- Asyncio-based concurrency
-- Hybrid setups (asyncio + threads)
+## 📌 WHY?
+
+I was wondered how python concurrency model performs and which one is best for IO-bound execution in practice. 
+I've already had answers to my doubts and even clearly but I wanted to help someone else to understand the differences with pratical results.
+
+Mainly:
+- I wanted to know which one, between asyncio and thread perform well when performing io-bound task
+- I asked myself: can we combine asyncio and thread ? What would be the result? Better, more faster or just worst ?  
+- I wanted to confirm that there is any difference in term of time and resources usage between thread, asyncio, sync when performing cpu-bound execution
+- Does the sentence "asyncio/thread should not be used with cpu-bound execution, they don't provide any advantage or even add overhead" correct ?
+- Clear my doubts!
+
+So I conducted this simple benchmarking.
+
+We have two results set:
+- the first result set is about cpu bound execution (character encding) wih sync, asyncio and threads
+- the second one is about an io bound execution (http request) using sync, asyncio, threads, asyncio and threads combined
 
 ---
 
-## 🧪 Benchmarks To Build
+# task type name
+# description of the experiment conducted
+# sync version of the script and where to find the rest
+# summary table
+# plot per metrics and a conclusion under each one
+# A global conclusion for the task type among execution type
+    - when to use What
+    - what to avoid
 
-### Phase 1 — Baseline (CPU-Bound)
+Describe the environment used for server for io: cpu, memory
 
-- [x] Run CPU-bound loop (e.g. char encode sum) with:
-  - sync function
-  - `async def`
-  - threads (TBD)
-- [x] Confirm there's **no benefit from asyncio** for CPU-bound tasks
-- [ ] Test threads on CPU-bound and see if any GIL constraints show
-
-### Phase 2 — Pure I/O (Network or Filesystem)
-
-- [ ] Fetch N URLs with `requests` (sync baseline)
-- [ ] Fetch N URLs with `requests` in `ThreadPoolExecutor`
-- [ ] Fetch N URLs with `aiohttp` + `asyncio.gather`
-- [ ] Fetch N URLs with hybrid: `aiohttp` + thread offload (e.g. slow file I/O in async)
 ---
-
-## 📈 METRICS TO COLLECT
-
-For each test:
-- ⏱️ Total wall time
-- 🚀 Throughput = N / total time
-- 🕒 Avg latency (if measurable per task)
-- 🔁 Scale test at: [10, 50, 100, 500, 1000] tasks
-- (Optional) 🔥 CPU usage or idle % (use `psutil`)
-- (Optional) 💾 Memory usage for large N
-
-## 🔧 IDEAS FOR NEXT STEPS
-
-- Plot results with `matplotlib`
-- Visualize latency histograms
-- Build an internal "mini load tester"
-- Add compressed response simulation (gzip / brotli)
-- Write a conclusion file: **"What I learned"**
+# title: how to execute
+# project cloning
+# environment set up needed software
+# for cpu task, where to find script and where are the results output
+# for io task, server setup using httbin docker image, where are scripts and where are the output
+# result data can vary based on environement and compute resources, but if execute in the same environement, the trends will be the sameg
