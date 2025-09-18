@@ -1,5 +1,6 @@
 import asyncio
 import os
+import time
 from pathlib import Path
 from tempfile import gettempdir
 
@@ -27,7 +28,7 @@ async def get_and_write_data(
                 return False
             await af.write(await response.read())
     except Exception as e:
-        print(e)
+        print(repr(e))
         return False
     else:
         return True
@@ -68,10 +69,13 @@ if __name__ == "__main__":
     def execute(url_count=100_000):
         return asyncio.run(main(url_count))
     
-    program_runner(
-        execute,
-        f"asyncio_data_with_100_000_urls",
-        get_dir_name(__file__),
-        url_count=100_000,
-        descr=f"""Io bound execution using asyncio programming. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
-    )
+    for count in [10_000, 100_000]:
+        print("Execution for:", count, "urls")
+        program_runner(
+            execute,
+            f"asyncio_data_with_{count}_urls",
+            get_dir_name(__file__),
+            url_count=count,
+            descr=f"""Io bound execution using asyncio programming. The experiment fetches {count} urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+        )
+        time.sleep(10)

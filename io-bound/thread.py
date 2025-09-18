@@ -50,7 +50,7 @@ def main(thread_count=5):
         )
 
     total_bytes = 0
-    total_urls = 100_000
+    total_urls = 10000
     threads:list[Thread] = []
     f_lock = Lock()
     url_q = Queue()
@@ -103,10 +103,10 @@ if __name__ == "__main__":
         print("execution for", count, "threads...\n")
         program_runner(
             main,
-            f"{count}_threads_data_with_100_000_urls",
+            f"{count}_threads_data_with_10_000_urls",
             get_dir_name(__file__),
             thread_count=count,
-            descr=f"""Io bound execution using {count} threads. The experiment fetches 100_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
+            descr=f"""Io bound execution using {count} threads. The experiment fetches 10_000 urls and stores the response data into a file. The returned values represnt the total bytes received from network and the number of failed requests (>=400 status code or error)."""
         )
         time.sleep(10)
 
