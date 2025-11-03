@@ -4,6 +4,7 @@ A comprehensive benchmarking suite that empirically compares Python's concurrenc
 
 This project provides real-world performance data with detailed metrics on execution time, CPU usage, memory consumption, and network throughput to help me (and hopefully you) make informed decisions about which concurrency model to use for specific use cases.
 
+**Python version used 3.12**
 
 ## 📌 WHY?
 
