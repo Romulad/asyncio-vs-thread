@@ -32,6 +32,8 @@ We have two result sets:
 
 **IO-bound execution**: Tasks that are limited by input/output operations (like network requests). The program spends most of its time waiting for external resources rather than using the CPU.
 
+[Read this for full understanding](https://medium.com/@romualdoluwatobi/cpu-bound-and-i-o-bound-execution-explained-for-developers-with-real-life-examples-1b4a6abb2b42)
+
 **Understanding CPU Metrics:**
 When reading the results, you'll encounter two types of CPU usage measurements:
 - **System CPU (sys)**: The total CPU usage across all applications and processes running on the entire system. This shows the overall system load.
